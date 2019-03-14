@@ -1,0 +1,13 @@
+{
+    "port": 3000,
+    "gameWidth":640,
+    "gameHeight":384,
+    "gravity":1,
+    "jumpHeight":-16,
+    "xSpeed":4,
+    "defaultPlayer1XPos":32,
+    "defaultPlayer1YPos":32,
+    "defaultPlayerWidth":32,
+    "defaultPlayerHeight":64,
+    "networkUpdateFactor":60
+}
