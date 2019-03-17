@@ -7,22 +7,13 @@ var config = require('../config.json');
 var util = require('./lib/util');
 
 var Game = require('./game.js');
-var Player = require('./player.js');
 
 var sockets = {};
 
 app.use(express.static(__dirname + '/../client'));
 
 io.on('connection', socket => {
-
-    var currentPlayer = new Player(
-        socket.id,
-        { x:config.defaultPlayer1XPos, y:config.defaultPlayer1YPos },
-        { x:config.defaultPlayerWidth, y:config.defaultPlayerHeight },
-        4,
-        game.players.length % 2 === 0,
-        { left:false, right:false, up:false, down:false, a:false, b:false }
-    );
+    var currentPlayer = game.createNewPlayer(socket);
 
     socket.on('gotit', () => {
         if (util.findIndex(game.players, currentPlayer.id) > -1 || !util.validNick(currentPlayer.name)) {
@@ -30,6 +21,7 @@ io.on('connection', socket => {
         } else {
             sockets[currentPlayer.id] = socket;
             game.players.push(currentPlayer);
+            game.updatePlayers(currentPlayer.role);
         }
     });
     
@@ -41,7 +33,7 @@ io.on('connection', socket => {
 
     socket.on('disconnect', () => {
         if (util.findIndex(game.players, currentPlayer.id) > -1) game.players.splice(util.findIndex(game.players, currentPlayer.id), 1);
-        socket.broadcast.emit('playerDisconnect', { name: currentPlayer.name });
+        game.updatePlayers(currentPlayer.role);
     });
     
     socket.on('inputs', keys => currentPlayer.keys = keys);
@@ -50,7 +42,7 @@ io.on('connection', socket => {
 var game = new Game();
 var sendUpdates = () => game.players.forEach(player => sockets[player.id].emit('updateGame', game));
 
-setInterval(game.act, 1000 / 60);
+setInterval(game.act, 1000 / config.networkUpdateFactor);
 setInterval(sendUpdates, 1000 / config.networkUpdateFactor);
 
 var serverPort = process.env.PORT || config.port;

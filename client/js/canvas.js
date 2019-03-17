@@ -1,44 +1,63 @@
 var flipHorizontally = (context, around) => {
-	context.translate(around, 0);
-	context.scale(-1, 1);
-	context.translate(-around, 0);
+    context.translate(around, 0);
+    context.scale(-1, 1);
+    context.translate(-around, 0);
 }
 
 class CanvasDisplay {
     constructor(parent) {
-        this.data = global.gameData;
         this.canvas = document.createElement('canvas');
         this.cx = this.canvas.getContext("2d", { alpha: false });
-        this.cx.imageSmoothingEnabled = false;
+        this.zoom = 2;
         this.animationTime = 0;
-        this.canvas.width = global.screenWidth;
-        this.canvas.height = global.screenHeight;
+        this.canvas.width = global.screenWidth * this.zoom;
+        this.canvas.height = global.screenHeight * this.zoom;
         parent.appendChild(this.canvas);
+        this.cx.scale(this.zoom, this.zoom);
+        this.cx.imageSmoothingEnabled = false;
+        this.data = global.gameData;
 
         this.drawBackground = () => {
-            this.cx.fillStyle = '#033';
-            this.cx.fillRect(0, 0, global.screenWidth, global.screenHeight);
-            for (let x = 0; x < this.canvas.width; x += 32) {
-                for (let y = 0; y < this.canvas.height; y += 32) {
-                    this.cx.strokeStyle = "lime";
-                    this.cx.strokeRect(x, y, 32, 32);
-                }
-            }
+            var back = document.createElement("img");
+            back.src = "img/background.png";
+
+            this.cx.drawImage(back,
+                0, 0, this.canvas.width, this.canvas.height,
+                0, 0, this.canvas.width, this.canvas.height);
         }
 
         this.drawPlayers = () => {
             this.data.players.forEach(player => {
-			    var playerSprite = document.createElement("img");
-                playerSprite.src = "img/player.png";
+                if (player.role === "player1" || player.role === "player2") {
 
-                this.cx.save();
-	            if (!player.direction) flipHorizontally(this.cx, player.pos.x + player.size.x / 2);
-                
-                this.cx.drawImage(playerSprite,
-                    0, 0, player.size.x, player.size.y,
-                    player.pos.x, player.pos.y, player.size.x, player.size.y);
-                
-                this.cx.restore();
+                    this.cx.save();
+                    if (!player.direction) flipHorizontally(this.cx, player.pos.x + player.size.x / 2);
+
+                    this.cx.fillStyle = "rgba(0, 0, 255, 0.5)";
+                    this.cx.fillRect(player.pos.x, player.pos.y,player.size.x, player.size.y);
+
+                    this.cx.restore();
+
+                    this.cx.textAlign = "center";
+                    this.cx.fillStyle = "#fff";
+                    this.cx.font = "18px consolas";
+                    this.cx.fillText(
+                        player.pos.x,
+                        player.pos.x + player.size.x/2,
+                        player.pos.y + player.size.y/2
+                    );
+
+
+                    if (player.role === "player1") {
+                        player.keysHistory.forEach((keys, nb1) => {
+                            this.cx.fillText(
+                                keys.frames,
+                                128,
+                                80 + 18 * nb1
+                            );
+                        });
+                    }
+                }
             });
         }
 
