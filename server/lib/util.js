@@ -2,13 +2,18 @@ module.exports = {
     validNick: nickname => /^\w*$/.exec(nickname) !== null,
     findIndex: (arr, id) => {
         var len = arr.length;
-        while (len--) if (arr[len].id === id) return len;
+        while (len--)
+            if (arr[len].id === id) return len;
         return -1;
     },
     sameKeys: (keys1, keys2) => {
-        for (let i = 0; i < keys1.length; i++) {
-            if (keys1[i] !== keys2[i]) return false;
-        }
-        return true;
+        if (keys1.left !== keys2.left ||
+            keys1.right !== keys2.right ||
+            keys1.up !== keys2.up ||
+            keys1.down !== keys2.down ||
+            keys1.a !== keys2.a ||
+            keys1.b !== keys2.b
+        ) return false;
+        else return true;
     }
 };

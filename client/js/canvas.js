@@ -26,7 +26,7 @@ class CanvasDisplay {
                 0, 0, this.canvas.width, this.canvas.height);
         }
 
-        this.drawPlayers = () => {
+        this.debugPlayers = () => {
             this.data.players.forEach(player => {
                 if (player.role === "player1" || player.role === "player2") {
 
@@ -40,19 +40,41 @@ class CanvasDisplay {
 
                     this.cx.textAlign = "center";
                     this.cx.fillStyle = "#fff";
-                    this.cx.font = "18px consolas";
+                    this.cx.font = "12px consolas";
                     this.cx.fillText(
-                        player.pos.x,
+                        "x:" + player.pos.x + " y:" + player.pos.y,
                         player.pos.x + player.size.x/2,
-                        player.pos.y + player.size.y/2
+                        player.pos.y - 6
+                    );
+                    this.cx.fillText(
+                        "action:" + player.action,
+                        player.pos.x + player.size.x/2,
+                        player.pos.y - 18
                     );
 
 
                     if (player.role === "player1") {
                         player.keysHistory.forEach((keys, nb1) => {
+                            var keyString = "";
+                            Object.entries(keys.keys).forEach(key => {
+                                if (key[1]) keyString += (" " + key[0]);
+                            });
                             this.cx.fillText(
-                                keys.frames,
+                                keys.frames + keyString,
                                 128,
+                                80 + 18 * nb1
+                            );
+                        });
+                    }
+                    if (player.role === "player2") {
+                        player.keysHistory.forEach((keys, nb1) => {
+                            var keyString = "";
+                            Object.entries(keys.keys).forEach(key => {
+                                if (key[1]) keyString += (" " + key[0]);
+                            });
+                            this.cx.fillText(
+                                keys.frames + keyString,
+                                512,
                                 80 + 18 * nb1
                             );
                         });
@@ -115,7 +137,7 @@ class CanvasDisplay {
             this.data = newData;
             this.animationTime += step;
             this.drawBackground();
-            this.drawPlayers();
+            this.debugPlayers();
             this.drawGameStatus();
         };
     }
