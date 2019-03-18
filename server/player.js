@@ -111,6 +111,15 @@ class Player {
         }
 
         this.updateKeysHistory = () => {
+            if (this.keys.left && this.keys.right) {
+                this.keys.left = false;
+                this.keys.right = false;
+            }
+            if (this.keys.up && this.keys.down) {
+                this.keys.down = false;
+                this.keys.up = false;
+            }
+
             if (this.keysHistory.length > 0 && util.sameKeys(this.keys, this.keysHistory[this.keysHistory.length-1].keys)) {
                 this.keysHistory[this.keysHistory.length-1].frames++;
             }

@@ -19,12 +19,14 @@ class Game {
                 if (playerRole === "player1" || playerRole === "player2") {
                     if (this.players[0].id === player.id) {
                         player.role = "player1";
+                        player.keysHistory = [];
                         player.pos = {
                             x: config.defaultPlayer1XPos,
                             y: config.defaultPlayer1YPos
                         };
                     } else if (this.players.length > 1 && this.players[1].id === player.id) {
                         player.role = "player2";
+                        player.keysHistory = [];
                         player.pos = {
                             x: config.defaultPlayer2XPos,
                             y: config.defaultPlayer2YPos
