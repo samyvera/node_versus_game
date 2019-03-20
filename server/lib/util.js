@@ -6,6 +6,11 @@ module.exports = {
             if (arr[len].id === id) return len;
         return -1;
     },
+    is: (value, array) => {
+        var result = false;
+        array.forEach(element => result = value === element ? true : result);
+        return result;
+    },
     sameKeys: (keys1, keys2) => {
         if (keys1.left !== keys2.left ||
             keys1.right !== keys2.right ||

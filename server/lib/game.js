@@ -1,5 +1,7 @@
-var config = require('../config.json');
-var Player = require('./player.js');
+var config = require('../../config.json');
+var util = require('./util');
+var Player = require('./player');
+var Vector2D = require('./vector2D');
 
 class Game {
     constructor() {
@@ -16,30 +18,21 @@ class Game {
 
         this.updatePlayers = playerRole => {
             this.players.forEach(player => {
-                if (playerRole === "player1" || playerRole === "player2") {
+                if (util.is(playerRole, ["player1", "player2"])) {
                     if (this.players[0].id === player.id) {
                         player.role = "player1";
                         player.keysHistory = [];
-                        player.pos = {
-                            x: config.defaultPlayer1XPos,
-                            y: config.defaultPlayer1YPos
-                        };
+                        player.pos = new Vector2D(config.defaultPlayer1XPos, config.defaultPlayer1YPos);
                         player.action = "idle";
                     } else if (this.players.length > 1 && this.players[1].id === player.id) {
                         player.role = "player2";
                         player.keysHistory = [];
-                        player.pos = {
-                            x: config.defaultPlayer2XPos,
-                            y: config.defaultPlayer2YPos
-                        };
+                        player.pos = new Vector2D(config.defaultPlayer2XPos, config.defaultPlayer2YPos);
                         player.action = "idle";
                     }
-                } else if (this.players.length > 2 && player.id !== this.players[0].id && player.id !== this.players[1].id) {
+                } else if (this.players.length > 2 && !util.is(player.id, [this.players[0].id, this.players[1].id])) {
                     player.role = "spectator";
-                    player.pos = {
-                        x: null,
-                        y: null
-                    };
+                    player.pos = new Vector2D(null, null);
                 }
             });
         }
@@ -57,14 +50,11 @@ class Game {
                 let otherXEnd = other.pos.x + other.size.x;
                 let otherYStart = other.pos.y;
                 let otherYEnd = other.pos.y + other.size.y;
-                if (other.id !== id && (other.role === "player1" || other.role === "player2") &&
-                    !(otherXStart > xEnd || otherXEnd < xStart || otherYStart > yEnd || otherYEnd < yStart)) {
-                    result = other;
-                }
+                if (other.id !== id && util.is(other.role, ["player1", "player2"]) &&
+                    !(otherXStart > xEnd || otherXEnd < xStart || otherYStart > yEnd || otherYEnd < yStart)) result = other;
             });
             return result;
         }
     }
 }
-
 module.exports = Game;

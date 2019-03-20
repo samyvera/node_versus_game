@@ -5,8 +5,7 @@ var io = require('socket.io')(http);
 
 var config = require('../config.json');
 var util = require('./lib/util');
-
-var Game = require('./game.js');
+var Game = require('./lib/game.js');
 
 var sockets = {};
 
@@ -16,15 +15,14 @@ io.on('connection', socket => {
     var currentPlayer = game.createNewPlayer(socket);
 
     socket.on('gotit', () => {
-        if (util.findIndex(game.players, currentPlayer.id) > -1 || !util.validNick(currentPlayer.name)) {
-            socket.disconnect();
-        } else {
+        if (util.findIndex(game.players, currentPlayer.id) > -1 || !util.validNick(currentPlayer.name)) socket.disconnect();
+        else {
             sockets[currentPlayer.id] = socket;
             game.players.push(currentPlayer);
             game.updatePlayers(currentPlayer.role);
         }
     });
-    
+
     socket.on('spawn', playerName => {
         if (util.findIndex(game.players, currentPlayer.id) > -1) game.players.splice(util.findIndex(game.players, currentPlayer.id), 1);
         currentPlayer.name = playerName;
@@ -35,7 +33,7 @@ io.on('connection', socket => {
         if (util.findIndex(game.players, currentPlayer.id) > -1) game.players.splice(util.findIndex(game.players, currentPlayer.id), 1);
         game.updatePlayers(currentPlayer.role);
     });
-    
+
     socket.on('inputs', keys => currentPlayer.keys = keys);
 });
 

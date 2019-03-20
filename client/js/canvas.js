@@ -59,10 +59,10 @@ class CanvasDisplay {
                         var posInputY;
                         if (player.role === "player1") {
                             posInputX = 0;
-                            posInputY = 64;
+                            posInputY = 48;
                         } else {
                             posInputX = 544;
-                            posInputY = 64;
+                            posInputY = 48;
                         }
 
                         this.cx.fillStyle = "rgba(0, 0, 0, 0.5)";
