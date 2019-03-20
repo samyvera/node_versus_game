@@ -24,6 +24,7 @@ class Game {
                             x: config.defaultPlayer1XPos,
                             y: config.defaultPlayer1YPos
                         };
+                        player.action = "idle";
                     } else if (this.players.length > 1 && this.players[1].id === player.id) {
                         player.role = "player2";
                         player.keysHistory = [];
@@ -31,6 +32,7 @@ class Game {
                             x: config.defaultPlayer2XPos,
                             y: config.defaultPlayer2YPos
                         };
+                        player.action = "idle";
                     }
                 } else if (this.players.length > 2 && player.id !== this.players[0].id && player.id !== this.players[1].id) {
                     player.role = "spectator";

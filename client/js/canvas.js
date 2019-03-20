@@ -10,7 +10,7 @@ class CanvasDisplay {
         this.cx = this.canvas.getContext("2d", {
             alpha: false
         });
-        this.zoom = 2;
+        this.zoom = 1;
         this.animationTime = 0;
         this.canvas.width = global.screenWidth * this.zoom;
         this.canvas.height = global.screenHeight * this.zoom;
@@ -107,7 +107,6 @@ class CanvasDisplay {
                                 this.cx.drawImage(onesImg,
                                     10 * frame[i], 0, 10, 16,
                                     posInputX + 64 + i * 10, posInputY + 16 * nb, 10, 16);
-                                
                             }
                         });
                     }

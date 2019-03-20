@@ -13,6 +13,7 @@ class Player {
 
         this.status = null;
         this.action = null;
+        this.input = null;
 
         this.keys = { left:false, right:false, up:false, down:false, a:false, b:false };
         this.keysHistory = [];
@@ -23,9 +24,9 @@ class Player {
 
         this.moveX = game => {
             this.speed.x = 0;
-            if (this.keys.left && !this.keys.right && this.action === null ||
+            if (this.action === "moveForward" && !this.direction || this.action === "moveBackward" && this.direction ||
                 this.action === "forwardJump" && !this.direction || this.action === "backJump" && this.direction) this.speed.x = -this.xSpeed;
-            if (this.keys.right && !this.keys.left && this.action === null ||
+            if (this.action === "moveForward" && this.direction || this.action === "moveBackward" && !this.direction ||
                 this.action === "forwardJump" && this.direction || this.action === "backJump" && !this.direction) this.speed.x = this.xSpeed;
 
             var newPos = {
@@ -88,12 +89,7 @@ class Player {
         this.moveY = game => {
             this.speed.y += this.gravity;
 
-            if (this.keys.up && this.action === null) {
-                this.speed.y += this.jumpHeight;
-                if (this.keys.left && !this.direction || this.keys.right && this.direction) this.action = "forwardJump";
-                else if (this.keys.left && this.direction || this.keys.right && !this.direction) this.action = "backJump";
-                else this.action = "neutralJump";
-            }
+            if (this.input === "neutralJump" || this.input === "forwardJump" || this.input === "backJump") this.speed.y += this.jumpHeight;
 
             var newPos = {
                 x: this.pos.x,
@@ -106,7 +102,7 @@ class Player {
                 this.speed.y = 0;
                 if (this.pos.y + this.size.y < config.gameHeight)
                     while (this.pos.y % 16 !== 0) this.pos.y++;
-                if (this.action === "forwardJump" || this.action === "backJump" || this.action === "neutralJump") this.action = null;
+                if (this.action === "forwardJump" || this.action === "backJump" || this.action === "neutralJump") this.action = "idle";
             }
         }
 
@@ -143,8 +139,22 @@ class Player {
         }
 
         this.play = game => {
+
+            if (this.keys.up && (this.action === "idle" || this.action === "moveForward" || this.action === "moveBackward")) {
+                if (this.keys.left && !this.direction || this.keys.right && this.direction) this.input = "forwardJump";
+                else if (this.keys.left && this.direction || this.keys.right && !this.direction) this.input = "backJump";
+                else this.input = "neutralJump";
+            }
+            else if ((this.keys.right && !this.keys.left && this.direction || this.keys.left && !this.keys.right && !this.direction) &&
+                    (this.action === "idle" || this.action === "moveForward" || this.action === "moveBackward")) this.input = "moveForward";
+            else if ((this.keys.left && !this.keys.right && this.direction || this.keys.right && !this.keys.left && !this.direction) &&
+                    (this.action === "idle" || this.action === "moveForward" || this.action === "moveBackward")) this.input = "moveBackward";
+            else if (this.action === "moveForward" || this.action === "moveBackward") this.input = "idle";
+
+            this.action = this.input ? this.input : this.action;
+
             if (!this.status) {
-                if (!this.action) {
+                if (this.action === "idle" || this.action === "moveForward" || this.action === "moveBackward") {
                     this.updateDirection(game);
                     this.moveX(game);
                     this.moveY(game);
@@ -163,6 +173,7 @@ class Player {
             this.updateKeysHistory();
             if (this.role === "player1" || this.role === "player2") this.play(game);
             else this.spectate(game);
+            this.input = null;
         }
     }
 }
