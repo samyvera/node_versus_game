@@ -2,6 +2,7 @@ var config = require('../../config.json');
 var util = require('./util');
 var Player = require('./player');
 var Vector2D = require('./vector2D');
+var Collision = require('./collision');
 
 class Game {
     constructor() {
@@ -39,20 +40,21 @@ class Game {
 
         this.obstacleAt = (pos, size) => pos.x < 0 || pos.x + size.x > config.gameWidth || pos.y + size.y > config.gameHeight - 32 ? true : false;
 
-        this.playerAt = (id, pos, size) => {
-            let xStart = pos.x;
-            let xEnd = pos.x + size.x;
-            let yStart = pos.y;
-            let yEnd = pos.y + size.y;
+        this.collisionAt = actor => {
+            let xStart = actor.pos.x;
+            let xEnd = actor.pos.x + actor.size.x;
+            let yStart = actor.pos.y;
+            let yEnd = actor.pos.y + actor.size.y;
             var result = null;
             this.players.forEach(other => {
                 let otherXStart = other.pos.x;
                 let otherXEnd = other.pos.x + other.size.x;
                 let otherYStart = other.pos.y;
                 let otherYEnd = other.pos.y + other.size.y;
-                if (other.id !== id && util.is(other.role, ["player1", "player2"]) &&
-                    !(otherXStart > xEnd || otherXEnd < xStart || otherYStart > yEnd || otherYEnd < yStart)) result = other;
+                if (other.id !== actor.id && util.is(other.role, ["player1", "player2"]) &&
+                    !(otherXStart > xEnd || otherXEnd < xStart || otherYStart > yEnd || otherYEnd < yStart)) result = new Collision(actor, other);
             });
+            this.collision = result;
             return result;
         }
     }

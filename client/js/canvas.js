@@ -112,6 +112,12 @@ class CanvasDisplay {
                     }
                 }
             });
+
+            var col = this.data.collision;
+            if (col) {
+                this.cx.fillStyle = "rgba(255, 0, 0, 0.5)";
+                this.cx.fillRect(col.pos.x, col.pos.y, col.size.x, col.size.y);
+            }
         }
 
         this.drawGameStatus = () => {

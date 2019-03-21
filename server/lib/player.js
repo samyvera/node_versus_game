@@ -45,9 +45,12 @@ class Player {
             var newPos = new Vector2D(this.pos.x + this.speed.x, this.pos.y);
 
             var obstacle = game.obstacleAt(newPos, this.size);
-            var player = game.playerAt(this.id, newPos, this.size);
+            var collision = game.collisionAt(this);
+            var player;
+            if (collision) player = collision.actorB;
+
             if (!obstacle) {
-                if (player) {
+                if (collision) {
                     var obstaclePlayerLeft = game.obstacleAt(new Vector2D(player.pos.x - 1, player.pos.y), player.size);
                     var obstaclePlayerRight = game.obstacleAt(new Vector2D(player.pos.x + 1, player.pos.y), player.size);
                     if (!obstaclePlayerLeft && !obstaclePlayerRight) {
@@ -79,10 +82,14 @@ class Player {
                     }
                 } else this.pos = newPos;
             } else {
-                if (this.pos.x < config.gameWidth / 2) this.pos.x = 0;
-                else this.pos.x = config.gameWidth - this.size.x;
-                if (player && player.pos.x === 0) this.pos.x++;
-                else if (player && player.pos.x + player.size.x === config.gameWidth) this.pos.x--;
+                if (collision) {
+                    if (player.pos.x === 0) this.pos.x++;
+                    else if (player.pos.x + player.size.x === config.gameWidth) this.pos.x--;
+                }
+                else {
+                    if (this.pos.x < config.gameWidth / 2) this.pos.x = 0;
+                    else this.pos.x = config.gameWidth - this.size.x;
+                }
             }
         }
 
