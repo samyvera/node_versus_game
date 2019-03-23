@@ -1,6 +1,19 @@
 var socket = io();
 
 var setupSocket = socket => {
+    socket.on("welcome", newPlayer => {
+        socket.emit("gotit");
+        global.player = newPlayer;
+        global.gameStart = true;
+    });
+
+    socket.on("updateGame", newData => global.gameData = newData);
+
+    socket.on("RIP", () => {
+        global.gameStart = false;
+        global.died = true;
+    });
+
     socket.on("connect_failed", () => {
         socket.close();
         global.disconnected = true;
@@ -9,21 +22,6 @@ var setupSocket = socket => {
     socket.on("disconnect", () => {
         socket.close();
         global.disconnected = true;
-    });
-
-    socket.on("welcome", newPlayer => {
-        global.player = newPlayer;
-        socket.emit("gotit");
-        global.gameStart = true;
-    });
-
-    socket.on("updateGame", newData => {
-        global.gameData = newData;
-    });
-
-    socket.on("RIP", () => {
-        global.gameStart = false;
-        global.died = true;
     });
 }
 

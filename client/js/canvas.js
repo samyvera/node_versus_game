@@ -10,7 +10,7 @@ class CanvasDisplay {
         this.cx = this.canvas.getContext("2d", {
             alpha: false
         });
-        this.zoom = 1;
+        this.zoom = 2;
         this.animationTime = 0;
         this.canvas.width = global.screenWidth * this.zoom;
         this.canvas.height = global.screenHeight * this.zoom;
@@ -23,9 +23,28 @@ class CanvasDisplay {
             var back = document.createElement("img");
             back.src = "img/background.png";
 
+            var offset = this.data.totalOffset % 256;
             this.cx.drawImage(back,
                 0, 0, this.canvas.width, this.canvas.height,
-                0, 0, this.canvas.width, this.canvas.height);
+                offset - 256, 0, this.canvas.width, this.canvas.height);
+            this.cx.drawImage(back,
+                0, 0, this.canvas.width, this.canvas.height,
+                offset, 0, this.canvas.width, this.canvas.height);
+            this.cx.drawImage(back,
+                0, 0, this.canvas.width, this.canvas.height,
+                offset + 256, 0, this.canvas.width, this.canvas.height);
+            this.cx.drawImage(back,
+                0, 0, this.canvas.width, this.canvas.height,
+                offset + 512, 0, this.canvas.width, this.canvas.height);
+            this.cx.drawImage(back,
+                0, 0, this.canvas.width, this.canvas.height,
+                offset + 768, 0, this.canvas.width, this.canvas.height);
+
+            var hud = document.createElement("img");
+            hud.src = "img/hud.png";
+            this.cx.drawImage(hud,
+                0, 0, this.canvas.width, 48,
+                0, 0, this.canvas.width, 48);
         }
 
         this.debugPlayers = () => {
@@ -112,12 +131,6 @@ class CanvasDisplay {
                     }
                 }
             });
-
-            var col = this.data.collision;
-            if (col) {
-                this.cx.fillStyle = "rgba(255, 0, 0, 0.5)";
-                this.cx.fillRect(col.pos.x, col.pos.y, col.size.x, col.size.y);
-            }
         }
 
         this.drawGameStatus = () => {

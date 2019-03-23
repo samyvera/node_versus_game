@@ -1,4 +1,4 @@
-var config = require('../../config.json');
+var config = require('../../config');
 var util = require('./util');
 var Vector2D = require('./vector2D');
 
@@ -35,58 +35,46 @@ class Player {
 
         this.moveX = game => {
             this.speed.x = 0;
-            
             var direction = this.direction ? 1 : -1;
             if (this.action === "moveForward") this.speed.x = direction * this.moveForwardXSpeed;
             else if (this.action === "moveBackward") this.speed.x = direction * this.moveBackwardXSpeed;
             else if (this.action === "forwardJump") this.speed.x = direction * this.forwardJumpXSpeed;
             else if (this.action === "backJump") this.speed.x = direction * this.backJumpXSpeed;
 
-            var newPos = new Vector2D(this.pos.x + this.speed.x, this.pos.y);
+            var newPlayer = new Player(this.id, this.role);
+            newPlayer.size = this.size;
+            newPlayer.pos = new Vector2D(this.pos.x + this.speed.x, this.pos.y);
 
-            var obstacle = game.obstacleAt(newPos, this.size);
-            var collision = game.collisionAt(this);
-            var player;
-            if (collision) player = collision.actorB;
-
+            var obstacle = game.obstacleAt(newPlayer.pos, newPlayer.size);
+            var collision = game.collisionAt(newPlayer);
+            var player = null;
+            if (collision && collision.actorB instanceof Player) player = collision.actorB;
             if (!obstacle) {
-                if (collision) {
-                    var obstaclePlayerLeft = game.obstacleAt(new Vector2D(player.pos.x - 1, player.pos.y), player.size);
-                    var obstaclePlayerRight = game.obstacleAt(new Vector2D(player.pos.x + 1, player.pos.y), player.size);
-                    if (!obstaclePlayerLeft && !obstaclePlayerRight) {
-                        var playerNewPos = player.pos.x;
-                        if (util.is(player.action, ["idle"]) && util.is(this.action, ["moveForward", "moveBackward"])) {
-                            if (this.pos.x + this.size.x / 2 <= player.pos.x + player.size.x / 2) playerNewPos = newPos.x + this.size.x;
-                            if (this.pos.x + this.size.x / 2 > player.pos.x + player.size.x / 2) playerNewPos = newPos.x - player.size.x;
+                if (player && util.is(player.action, ["idle", "moveForward", "moveBackward"])) {
+                    var playerNewPos = player.pos.x;
+                    if (this.action !== "idle" || (newPlayer.pos.x === 0 || newPlayer.pos.x === config.gameWidth - newPlayer.size.x)) {
+                        if (newPlayer.pos.x + newPlayer.size.x / 2 < player.pos.x + player.size.x / 2) playerNewPos = newPlayer.pos.x + newPlayer.size.x;
+                        else playerNewPos = newPlayer.pos.x - player.size.x;
+                    }
+                    if (!game.obstacleAt(new Vector2D(playerNewPos, player.pos.y), player.size)) {
+                        this.pos = newPlayer.pos;
+                        player.pos.x = playerNewPos;
+                    } else {
+                        if (player.pos.x < config.gameWidth / 2) {
+                            player.pos.x = 0;
+                            this.pos.x = player.size.x;
                         }
-                        else if (util.is("idle", [player.action, this.action])) {
-                            //same push
-                        }
-                        if (!game.obstacleAt(new Vector2D(playerNewPos, player.pos.y), player.size)) {
-                            this.pos = newPos;
-                            player.pos.x = playerNewPos;
-                        } else {
-                            if (player.pos.x < config.gameWidth / 2) {
-                                player.pos.x = 0;
-                                this.pos.x = player.size.x;
-                            } else {
-                                player.pos.x = config.gameWidth - player.size.x;
-                                this.pos.x = config.gameWidth - player.size.x - this.size.x;
-                            }
+                        else {
+                            player.pos.x = config.gameWidth - player.size.x;
+                            this.pos.x = player.pos.x - this.size.x;
                         }
                     }
-                    if (player.pos.x === 0 && this.pos.x + this.xSpeed > player.size.x) {
-                        this.pos.x = player.size.x;
-                    } else if (player.pos.x === config.gameWidth - player.size.x && this.pos.x + this.size.x - this.xSpeed < player.pos.x) {
-                        this.pos.x = player.pos.x - this.size.x;
-                    }
-                } else this.pos = newPos;
+                } else this.pos = newPlayer.pos;
             } else {
-                if (collision) {
-                    if (player.pos.x === 0) this.pos.x++;
-                    else if (player.pos.x + player.size.x === config.gameWidth) this.pos.x--;
-                }
-                else {
+                if (player) {
+                    if (player.pos.x === 0) this.pos.x = player.size.x;
+                    else if (player.pos.x + player.size.x === config.gameWidth) this.pos.x = config.gameWidth - player.size.x - this.size.x;
+                } else {
                     if (this.pos.x < config.gameWidth / 2) this.pos.x = 0;
                     else this.pos.x = config.gameWidth - this.size.x;
                 }
@@ -95,9 +83,7 @@ class Player {
 
         this.moveY = game => {
             this.speed.y += this.gravity;
-
             if (util.is(this.input, ["neutralJump", "forwardJump", "backJump"])) this.speed.y += this.jumpHeight;
-
             var newPos = new Vector2D(this.pos.x, this.pos.y + this.speed.y);
 
             var obstacle = game.obstacleAt(newPos, this.size);
@@ -111,15 +97,6 @@ class Player {
         }
 
         this.updateKeysHistory = () => {
-            if (this.keys.left && this.keys.right) {
-                this.keys.left = false;
-                this.keys.right = false;
-            }
-            if (this.keys.up && this.keys.down) {
-                this.keys.down = false;
-                this.keys.up = false;
-            }
-
             if (this.keysHistory.length > 0 && util.sameKeys(this.keys, this.keysHistory[this.keysHistory.length - 1].keys)) this.keysHistory[this.keysHistory.length - 1].frames++;
             else {
                 if (this.keysHistory.length === 10) this.keysHistory.splice(0, 1);

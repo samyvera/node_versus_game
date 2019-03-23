@@ -1,5 +1,16 @@
 module.exports = {
     validNick: nickname => /^\w*$/.exec(nickname) !== null,
+    validKeys: keys => {
+        if (keys.left && keys.right) {
+            keys.left = false;
+            keys.right = false;
+        }
+        if (keys.up && keys.down) {
+            keys.down = false;
+            keys.up = false;
+        }
+        return keys;
+    },
     findIndex: (arr, id) => {
         var len = arr.length;
         while (len--)
