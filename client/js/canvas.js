@@ -82,7 +82,7 @@ class CanvasDisplay {
                 0, 0, 256, 64,
                 offset + 512, 288, 256, 64);
             this.cx.drawImage(ground1,
-                0, 0, 256, 32,
+                0, 0, 256, 64,
                 offset + 768, 288, 256, 64);
 
             var hud = document.createElement("img");
