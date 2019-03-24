@@ -135,7 +135,7 @@ class CanvasDisplay {
                         player.pos.y - 6
                     );
                     this.cx.fillText(
-                        "action:" + player.action,
+                        player.action,
                         player.pos.x + player.size.x / 2,
                         player.pos.y - 18
                     );

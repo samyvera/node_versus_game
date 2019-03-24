@@ -50,7 +50,7 @@ class Player {
             var player = null;
             if (collision && collision.actorB instanceof Player) player = collision.actorB;
             if (!obstacle) {
-                if (player && util.is(player.action, ["idle", "moveForward", "moveBackward"])) {
+                if (player && util.is(player.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch"])) {
                     var playerNewPos = player.pos.x;
                     if (this.action !== "idle" || (newPlayer.pos.x === 0 || newPlayer.pos.x === config.gameWidth - newPlayer.size.x)) {
                         if (newPlayer.pos.x + newPlayer.size.x / 2 < player.pos.x + player.size.x / 2) playerNewPos = newPlayer.pos.x + newPlayer.size.x;
@@ -107,6 +107,19 @@ class Player {
             }
         }
 
+        this.updateSize = game => {
+            if (util.is(this.input, ["forwardCrouch", "backwardCrouch", "neutralCrouch", "forwardJump", "backJump", "neutralJump"]) && this.size.y !== 64) {
+                this.size.y = 64;
+                this.pos.y += 32;
+            }
+            else {
+                if (this.size.y === 64 && !util.is(this.action, ["forwardCrouch", "backwardCrouch", "neutralCrouch", "forwardJump", "backJump", "neutralJump"])) {
+                    this.size.y = 96;
+                    this.pos.y -= 32;
+                }
+            }
+        }
+
         this.updateDirection = game => {
             if (this.role === "player1") {
                 if (game.players.length === 1) this.direction = true;
@@ -122,15 +135,21 @@ class Player {
 
         this.getPlayerInput = () => {
             if (util.is(this.role, ["player1", "player2"])) {
-                if (this.keys.up && util.is(this.action, ["idle", "moveForward", "moveBackward"])) {
+                if (this.keys.up && util.is(this.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch"])) {
                     if (this.keys.left && !this.direction || this.keys.right && this.direction) this.input = "forwardJump";
                     else if (this.keys.left && this.direction || this.keys.right && !this.direction) this.input = "backJump";
                     else this.input = "neutralJump";
-                } else if ((this.keys.right && !this.keys.left && this.direction || this.keys.left && !this.keys.right && !this.direction) &&
-                    util.is(this.action, ["idle", "moveForward", "moveBackward"])) this.input = "moveForward";
+                }
+                else if (this.keys.down && util.is(this.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch"])) {
+                    if (this.keys.left && !this.direction || this.keys.right && this.direction) this.input = "forwardCrouch";
+                    else if (this.keys.left && this.direction || this.keys.right && !this.direction) this.input = "backwardCrouch";
+                    else this.input = "neutralCrouch";
+                }
+                else if ((this.keys.right && !this.keys.left && this.direction || this.keys.left && !this.keys.right && !this.direction) &&
+                    util.is(this.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch"])) this.input = "moveForward";
                 else if ((this.keys.left && !this.keys.right && this.direction || this.keys.right && !this.keys.left && !this.direction) &&
-                    util.is(this.action, ["idle", "moveForward", "moveBackward"])) this.input = "moveBackward";
-                else if (util.is(this.action, ["moveForward", "moveBackward"])) this.input = "idle";
+                    util.is(this.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch"])) this.input = "moveBackward";
+                else if (util.is(this.action, ["moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch"])) this.input = "idle";
             }
         }
 
@@ -138,6 +157,7 @@ class Player {
             this.action = this.input ? this.input : this.action;
 
             if (!this.status) {
+                this.updateSize(game);
                 if (util.is(this.action, ["idle", "moveForward", "moveBackward"])) {
                     this.updateDirection(game);
                     this.moveX(game);
