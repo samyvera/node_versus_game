@@ -67,51 +67,53 @@ class CanvasDisplay {
 
 
             var ground1 = document.createElement("img");
-            ground1.src = "img/ground1.png";
+            ground1.src = "img/ground2.png";
             offset = this.data.totalOffset % 256;
             this.cx.drawImage(ground1,
-                0, 0, 256, 32,
-                offset - 256, 320, 256, 32);
+                0, 0, 256, 64,
+                offset - 256, 288, 256, 64);
+            this.cx.drawImage(ground1,
+                0, 0, 256, 64,
+                offset, 288, 256, 64);
+            this.cx.drawImage(ground1,
+                0, 0, 256, 64,
+                offset + 256, 288, 256, 64);
+            this.cx.drawImage(ground1,
+                0, 0, 256, 64,
+                offset + 512, 288, 256, 64);
             this.cx.drawImage(ground1,
                 0, 0, 256, 32,
-                offset, 320, 256, 32);
-            this.cx.drawImage(ground1,
-                0, 0, 256, 32,
-                offset + 256, 320, 256, 32);
-            this.cx.drawImage(ground1,
-                0, 0, 256, 32,
-                offset + 512, 320, 256, 32);
-            this.cx.drawImage(ground1,
-                0, 0, 256, 32,
-                offset + 768, 320, 256, 32);
-
-            var ground2 = document.createElement("img");
-            ground2.src = "img/ground2.png";
-            offset = 1024 - this.data.totalOffset % 1024;
-            this.cx.drawImage(ground2,
-                0, 0, 256, 32,
-                offset / 4 - 512, 352, 256, 32);
-            this.cx.drawImage(ground2,
-                0, 0, 256, 32,
-                offset / 4 - 256, 352, 256, 32);
-            this.cx.drawImage(ground2,
-                0, 0, 256, 32,
-                offset / 4, 352, 256, 32);
-            this.cx.drawImage(ground2,
-                0, 0, 256, 32,
-                offset / 4 + 256, 352, 256, 32);
-            this.cx.drawImage(ground2,
-                0, 0, 256, 32,
-                offset / 4 + 512, 352, 256, 32);
-            this.cx.drawImage(ground2,
-                0, 0, 256, 32,
-                offset / 4 + 768, 352, 256, 32);
+                offset + 768, 288, 256, 64);
 
             var hud = document.createElement("img");
             hud.src = "img/hud.png";
             this.cx.drawImage(hud,
                 0, 0, this.canvas.width, 48,
                 0, 0, this.canvas.width, 48);
+        }
+
+        this.drawForeground = () => {
+            var ground2 = document.createElement("img");
+            ground2.src = "img/ground1.png";
+            var offset = 512 - this.data.totalOffset % 512;
+            this.cx.drawImage(ground2,
+                0, 0, 256, 64,
+                offset / 2 - 512, 320, 256, 64);
+            this.cx.drawImage(ground2,
+                0, 0, 256, 64,
+                offset / 2 - 256, 320, 256, 64);
+            this.cx.drawImage(ground2,
+                0, 0, 256, 64,
+                offset / 2, 320, 256, 64);
+            this.cx.drawImage(ground2,
+                0, 0, 256, 64,
+                offset / 2 + 256, 320, 256, 64);
+            this.cx.drawImage(ground2,
+                0, 0, 256, 64,
+                offset / 2 + 512, 320, 256, 64);
+            this.cx.drawImage(ground2,
+                0, 0, 256, 64,
+                offset / 2 + 768, 320, 256, 64);
         }
 
         this.debugPlayers = () => {
@@ -255,6 +257,7 @@ class CanvasDisplay {
             this.animationTime += step;
             this.drawBackground();
             this.debugPlayers();
+            this.drawForeground();
             this.drawGameStatus();
         };
     }
