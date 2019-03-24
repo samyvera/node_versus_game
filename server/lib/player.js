@@ -139,17 +139,7 @@ class Player {
 
         this.getPlayerInput = () => {
             if (util.is(this.role, ["player1", "player2"])) {
-                if (this.keys.right && util.is(this.action, ["idle", "forwardDash", "backDash"]) && this.keysHistory.length > 2 &&
-                    this.keysHistory[this.keysHistory.length-2].frames < 7 && this.keysHistory[this.keysHistory.length-3].keys.right) {
-                        if (this.direction) this.input = "forwardDash";
-                        else this.input = "backDash";
-                }
-                else if (this.keys.left && util.is(this.action, ["idle", "forwardDash", "backDash"]) && this.keysHistory.length > 2 &&
-                    this.keysHistory[this.keysHistory.length-2].frames < 7 && this.keysHistory[this.keysHistory.length-3].keys.left) {
-                        if (this.direction) this.input = "backDash";
-                        else this.input = "forwardDash";
-                }
-                else if (this.keys.up && util.is(this.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch", "forwardDash", "backDash"])) {
+                if (this.keys.up && util.is(this.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch", "forwardDash", "backDash"])) {
                     if (this.keys.left && !this.direction || this.keys.right && this.direction) this.input = "forwardJump";
                     else if (this.keys.left && this.direction || this.keys.right && !this.direction) this.input = "backJump";
                     else this.input = "neutralJump";
@@ -158,6 +148,16 @@ class Player {
                     if (this.keys.left && !this.direction || this.keys.right && this.direction) this.input = "forwardCrouch";
                     else if (this.keys.left && this.direction || this.keys.right && !this.direction) this.input = "backwardCrouch";
                     else this.input = "neutralCrouch";
+                }
+                else if (this.keys.right && (util.is(this.action, ["forwardDash", "backDash"]) || this.action === "idle" && this.keysHistory.length > 2 &&
+                    this.keysHistory[this.keysHistory.length-2].frames < 7 && this.keysHistory[this.keysHistory.length-3].keys.right)) {
+                        if (this.direction) this.input = "forwardDash";
+                        else this.input = "backDash";
+                }
+                else if (this.keys.left && (util.is(this.action, ["forwardDash", "backDash"]) || this.action === "idle" && this.keysHistory.length > 2 &&
+                    this.keysHistory[this.keysHistory.length-2].frames < 7 && this.keysHistory[this.keysHistory.length-3].keys.left)) {
+                        if (this.direction) this.input = "backDash";
+                        else this.input = "forwardDash";
                 }
                 else if ((this.keys.right && this.direction || this.keys.left && !this.direction) &&
                     util.is(this.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch"])) this.input = "moveForward";
