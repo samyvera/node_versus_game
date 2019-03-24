@@ -12,7 +12,7 @@ Live demo not available yet.
 Install the latest [Node.js](http://nodejs.org) 11 Stable
 
 ```console
-git clone https://github.com/5amyVera/node_game.git
+git clone https://github.com/5amyVera/node_versus_game.git
 
 cd node_game
 
