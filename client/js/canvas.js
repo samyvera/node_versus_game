@@ -1,3 +1,4 @@
+var debug = true;
 var flipHorizontally = (context, around) => {
     context.translate(around, 0);
     context.scale(-1, 1);
@@ -114,6 +115,28 @@ class CanvasDisplay {
             this.cx.drawImage(ground2,
                 0, 0, 256, 64,
                 offset / 2 + 768, 320, 256, 64);
+        }
+
+        this.drawPlayers = () => {
+            this.data.players.forEach(player => {
+                if (player.role === "player1" || player.role === "player2") {
+
+                    this.cx.save();
+                    if (!player.direction) flipHorizontally(this.cx, player.pos.x + player.size.x / 2);
+
+                    var playerImg = document.createElement("img");
+                    playerImg.src = "img/player.png";
+
+                    var xSprite = Math.floor(this.animationTime * 6) % 4;
+                    this.cx.drawImage(playerImg,
+                        xSprite * 64, 0, 64, 96,
+                        player.pos.x - 16, player.pos.y, 64, 96);
+
+                    this.cx.restore();
+                }
+
+                if (player.keys.b && !player.keysHistory[player.keysHistory.length-1].keys.b) debug = !debug;
+            });
         }
 
         this.debugPlayers = () => {
@@ -256,7 +279,8 @@ class CanvasDisplay {
             this.data = newData;
             this.animationTime += step;
             this.drawBackground();
-            this.debugPlayers();
+            this.drawPlayers();
+            if (debug) this.debugPlayers();
             this.drawForeground();
             this.drawGameStatus();
         };

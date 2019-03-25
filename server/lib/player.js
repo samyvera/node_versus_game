@@ -150,12 +150,12 @@ class Player {
                     else this.input = "neutralCrouch";
                 }
                 else if (this.keys.right && (util.is(this.action, ["forwardDash", "backDash"]) || this.action === "idle" && this.keysHistory.length > 2 &&
-                    this.keysHistory[this.keysHistory.length-2].frames < 7 && this.keysHistory[this.keysHistory.length-3].keys.right)) {
+                    this.keysHistory[this.keysHistory.length-2].frames < 8 && this.keysHistory[this.keysHistory.length-3].keys.right)) {
                         if (this.direction) this.input = "forwardDash";
                         else this.input = "backDash";
                 }
                 else if (this.keys.left && (util.is(this.action, ["forwardDash", "backDash"]) || this.action === "idle" && this.keysHistory.length > 2 &&
-                    this.keysHistory[this.keysHistory.length-2].frames < 7 && this.keysHistory[this.keysHistory.length-3].keys.left)) {
+                    this.keysHistory[this.keysHistory.length-2].frames < 8 && this.keysHistory[this.keysHistory.length-3].keys.left)) {
                         if (this.direction) this.input = "backDash";
                         else this.input = "forwardDash";
                 }
@@ -172,7 +172,7 @@ class Player {
 
             this.updateSize(game);
             if (!this.status) {
-                if (util.is(this.action, ["idle", "moveForward", "moveBackward"])) {
+                if (util.is(this.action, ["idle", "moveForward", "moveBackward", "forwardCrouch", "backwardCrouch", "neutralCrouch", "forwardDash", "backDash"])) {
                     this.updateDirection(game);
                 }
                 this.moveX(game);

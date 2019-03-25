@@ -14,7 +14,7 @@
     "defaultPlayer1YPos":256,
     "defaultPlayer2XPos":432,
     "defaultPlayer2YPos":256,
-    "defaultPlayerWidth":48,
+    "defaultPlayerWidth":32,
     "defaultPlayerHeight":96,
     "networkUpdateFactor":60
 }
