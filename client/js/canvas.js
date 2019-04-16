@@ -125,16 +125,25 @@ class CanvasDisplay {
                     if (!player.direction) flipHorizontally(this.cx, player.pos.x + player.size.x / 2);
 
                     var playerImg = document.createElement("img");
-                    playerImg.src = "img/player.png";
-
-                    var xSprite = Math.floor(this.animationTime * 6) % 4;
-                    this.cx.drawImage(playerImg,
-                        xSprite * 64, 0, 64, 96,
-                        player.pos.x - 16, player.pos.y, 64, 96);
+                    if (player.action === "moveForward") {
+                        playerImg.src = "img/player2.png";
+                        var xSprite = Math.floor(this.animationTime * 8) % 8;
+                        this.cx.drawImage(playerImg,
+                            xSprite * 48, 0, 48, 96,
+                            player.pos.x - 12, player.pos.y, 48, 96);
+                    }
+                    else {
+                        playerImg.src = "img/player.png";
+                        var xSprite = Math.floor(this.animationTime * 6) % 4;
+                        this.cx.drawImage(playerImg,
+                            xSprite * 64, 0, 64, 96,
+                            player.pos.x - 16, player.pos.y, 64, 96);
+                    }
 
                     this.cx.restore();
                 }
 
+                //debug
                 if (player.keys.b && !player.keysHistory[player.keysHistory.length-1].keys.b) debug = !debug;
             });
         }
