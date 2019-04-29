@@ -4,8 +4,8 @@
     "gameHeight":384,
     "gravity":1,
     "jumpHeight":-18,
-    "moveForwardXSpeed":4,
-    "moveBackwardXSpeed":-3,
+    "moveForwardXSpeed":3,
+    "moveBackwardXSpeed":-2,
     "forwardDashXSpeed":8,
     "backDashXSpeed":-7,
     "forwardJumpXSpeed":5,
@@ -16,5 +16,5 @@
     "defaultPlayer2YPos":256,
     "defaultPlayerWidth":32,
     "defaultPlayerHeight":96,
-    "networkUpdateFactor":60
+    "networkUpdateFactor":30
 }
