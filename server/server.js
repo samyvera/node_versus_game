@@ -41,7 +41,7 @@ var game = new Game();
 var sendUpdates = () => game.players.forEach(player => sockets[player.id].emit('updateGame', game));
 
 setInterval(game.act, 1000 / config.networkUpdateFactor);
-setInterval(sendUpdates, 1000 / config.networkUpdateFactor);
+setInterval(sendUpdates, 2000 / config.networkUpdateFactor);
 
 var serverPort = process.env.PORT || config.port;
 http.listen(serverPort, () => console.log("Server is listening on port " + serverPort));
